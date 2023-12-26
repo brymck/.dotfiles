@@ -1,0 +1,214 @@
+#!/usr/bin/env zsh
+autoload -U colors && colors
+
+THIS_DIR=${0:a:h}
+
+exit_status=0
+
+print_eval() {
+    command=$1
+    print "> ${fg_bold[white]}${command}${reset_color}"
+    eval $command
+}
+
+found() {
+    print "${fg_bold[green]}\u2713${reset_color}"
+}
+
+missing() {
+    print "${fg_no_bold[yellow]}missing${reset_color}"
+}
+
+fail() {
+    print "${fg_no_bold[red]}\u2717${reset_color}"
+}
+
+error() {
+    print "${fg_bold[red]}Failed to set up $1${reset_color}"
+    exit_status=1
+}
+
+url() {
+    target=$1
+    print "  ${fg_no_bold[cyan]}${target}${reset_color}"
+}
+
+section() {
+    zparseopts -E -D -- fail:=fail_flag
+
+    name=$1
+    check=$2
+    handle_missing=$3
+
+    print -n "$name "
+    if $check; then
+        found
+    else
+        if [[ -n $fail_flag ]]; then
+            fail
+            $handle_missing
+        else
+            missing
+            $handle_missing
+            $install
+            $check || error $name
+        fi
+    fi
+}
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Oh My Zsh
+#-----------------------------------------------------------------------------------------------------------------------
+
+check_oh_my_zsh() {
+    [ -d ~/.oh-my-zsh ]
+}
+
+install_oh_my_zsh() {
+    print_eval 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
+    print_eval 'source ~/.zshrc'
+}
+
+section 'Oh My Zsh' check_oh_my_zsh install_oh_my_zsh
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Homebrew
+#-----------------------------------------------------------------------------------------------------------------------
+
+check_homebrew() {
+    command -v brew > /dev/null
+}
+
+install_homebrew() {
+    print "Attempting to install Homebrew..."
+    print_eval '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+    print_eval 'source ~/.zshrc'
+}
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Homebrew packages
+#-----------------------------------------------------------------------------------------------------------------------
+
+section Homebrew check_homebrew install_homebrew
+
+HOMEBREW_PACKAGES=(
+    bat
+    coreutils
+    duf
+    dust
+    eza
+    fzf
+    git
+    gnupg
+    go
+    jq
+    lua
+    neovim
+    tree-sitter
+    wget
+    zoxide
+    zplug
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+)
+
+
+get_missing_homebrew_packages() {
+    comm -13 <(brew list) <(for p in $HOMEBREW_PACKAGES; do echo $p; done)
+}
+
+check_homebrew_packages() {
+    missing_packages=($(get_missing_homebrew_packages))
+    [ ${#missing_packages[@]} -eq 0 ]
+}
+
+install_homebrew_packages() {
+    missing_packages=($(get_missing_homebrew_packages))
+    print_eval "brew install $missing_packages"
+}
+
+section 'Homebrew packages' check_homebrew_packages install_homebrew_packages
+
+#-----------------------------------------------------------------------------------------------------------------------
+# iTerm 2
+#-----------------------------------------------------------------------------------------------------------------------
+
+check_iterm() {
+    count=$(mdfind -count -name 'iTerm' -onlyin /Applications -onlyin ~/Applications -onlyin /System/Applications 2>/dev/null)
+    [ $count -gt 0 ]
+}
+
+handle_missing_iterm() {
+    print 'Download iTerm 2 from'
+    url 'https://iterm2.com/downloads.html'
+}
+
+section 'iTerm 2' check_iterm handle_missing_iterm --fail
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Rust
+#-----------------------------------------------------------------------------------------------------------------------
+
+check_rust() {
+    command -v rustup > /dev/null
+}
+
+install_rust() {
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+}
+
+section Rust check_rust install_rust
+
+#-----------------------------------------------------------------------------------------------------------------------
+# LunarVim
+#-----------------------------------------------------------------------------------------------------------------------
+
+check_lunar_vim() {
+    command -v lvim > /dev/null
+}
+
+install_lunar_vim() {
+    bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+}
+
+section LunarVim check_lunar_vim install_lunar_vim
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Symlinks
+#-----------------------------------------------------------------------------------------------------------------------
+
+SYMLINKS=(
+    .config/lvim
+    .zshrc
+)
+
+get_missing_symlinks() {
+    for link in $SYMLINKS; do
+        if [[ ! -L "$HOME/$link" || "$(readlink "$HOME/$link")" != "$THIS_DIR/$link" ]]; then
+            print $link
+        fi
+    done
+}
+
+check_symlinks() {
+    missing_symlinks=($(get_missing_symlinks))
+    [ ${#missing_symlinks[@]} -eq 0 ]
+}
+
+handle_missing_symlinks() {
+    missing_symlinks=($(get_missing_symlinks))
+    print "Creating missing symlinks: $missing_symlinks"
+    for link in $missing_symlinks; do
+        if [ -e $HOME/$link ]; then
+            print_eval "mv '$HOME/$link' '$HOME/$link.bak'"
+        fi
+        if [ ! -d $(dirname $HOME/$link) ]; then
+            print_eval "mkdir -p '$(dirname $HOME/$link)'"
+        fi
+        print_eval "ln -s '$THIS_DIR/$link' '$HOME/$link'"
+    done
+}
+
+section symlinks check_symlinks handle_missing_symlinks
+
+exit $exit_status

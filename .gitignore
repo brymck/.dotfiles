@@ -1,2 +1,2 @@
-.DS_Store
-*.swp
+/.config/lvim/jar/
+/.config/lvim/lazy-lock.json
