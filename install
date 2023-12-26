@@ -102,6 +102,8 @@ HOMEBREW_PACKAGES=(
     gnupg
     go
     jq
+    koekeishiya/formulae/skhd
+    koekeishiya/formulae/yabai
     lua
     neovim
     tree-sitter
@@ -114,7 +116,7 @@ HOMEBREW_PACKAGES=(
 
 
 get_missing_homebrew_packages() {
-    comm -13 <(brew list) <(for p in $HOMEBREW_PACKAGES; do echo $p; done)
+    comm -13 <(brew list --full-name | sort) <(for p in $HOMEBREW_PACKAGES; do echo $p; done | sort)
 }
 
 check_homebrew_packages() {
@@ -179,6 +181,8 @@ section LunarVim check_lunar_vim install_lunar_vim
 
 SYMLINKS=(
     .config/lvim
+    .config/skhd
+    .config/yabai
     .zshrc
 )
 
