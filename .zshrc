@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 # Compinit
 #-----------------------------------------------------------------------------------------------------------------------
+
 # Only check .zcompdump to see if it needs regenerating once per day
 autoload -Uz compinit
 for dump in ~/.zcompdump(N.mh+24); do
@@ -96,7 +97,7 @@ source "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autos
 alias jb='jetbrains-open --verbose'
 
 # Command line tools
-command -v eza > /dev/null && alias ls='eza'
+alias ls='eza'
 
 # Kubernetes
 # `curl -o $HOME/.kubectl_aliases https://raw.githubusercontent.com/ahmetb/kubectl-alias/master/.kubectl_aliases`
@@ -119,7 +120,6 @@ alias vim='lvim'
 
 # Maven
 alias jj='java -jar target/$(basename $(pwd)).jar'
-alias lvim='/Users/bryan/.local/bin/lvim'
 alias mcp='mvn clean package'
 alias mcpst='mvn clean package -DskipTests=true'
 alias mct='mvn clean test'
@@ -131,7 +131,7 @@ alias muct='mvn --update-snapshots clean test'
 # pre-commit
 alias pcr='pre-commit run'
 
-# SketchUp
+# SketchUp bugfix
 alias sketch='(cd /Applications/SketchUp\ 2021/SketchUp.app/Contents/MacOS/ && ./SketchUp)'
 
 # wttr.in
@@ -161,6 +161,7 @@ export PATH="${(j[:])paths}:$PATH"
 #-----------------------------------------------------------------------------------------------------------------------
 # Rust
 #-----------------------------------------------------------------------------------------------------------------------
+
 [ -s "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
 
 #-----------------------------------------------------------------------------------------------------------------------
