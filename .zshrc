@@ -1,3 +1,6 @@
+export XDG_CONFIG_HOME=$HOME/.config
+VIM="lvim"
+
 #-----------------------------------------------------------------------------------------------------------------------
 # Compinit
 #-----------------------------------------------------------------------------------------------------------------------
@@ -62,7 +65,7 @@ zplug load
 # Use Vim as the default editor
 export ALTERNATIVE_EDITOR=
 export ALTERNATE_EDITOR=
-export EDITOR='vim'
+export EDITOR="$VIM"
 export LANG='en_US.UTF-8'
 
 # Go

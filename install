@@ -181,6 +181,7 @@ section LunarVim check_lunar_vim install_lunar_vim
 
 SYMLINKS=(
     .config/lvim
+    .config/nvim
     .config/skhd
     .config/yabai
     .zshrc
