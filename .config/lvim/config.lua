@@ -38,7 +38,9 @@ vim.filetype.add({
 ------------------------
 lvim.plugins = {
     "ThePrimeagen/harpoon",
+    "folke/zen-mode.nvim",
     "github/copilot.vim",
+    "laytan/cloak.nvim",
     "leoluz/nvim-dap-go",
     "mbbill/undotree",
     "mfussenegger/nvim-jdtls",
