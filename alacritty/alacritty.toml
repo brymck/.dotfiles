@@ -61,22 +61,12 @@ command   = "None"
 duration  = 0
 
 [selection]
-save_to_clipboard     = false
+save_to_clipboard     = true
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 
 [cursor]
 unfocused_hollow = true
 vi_mode_style    = "None"
-
-[[keyboard.bindings]]
-action = "Paste"
-key    = "V"
-mods   = "Control|Shift"
-
-[[keyboard.bindings]]
-action = "Copy"
-key    = "C"
-mods   = "Control|Shift"
 
 [[keyboard.bindings]]
 action = "ScrollPageUp"
@@ -97,9 +87,6 @@ mods   = "Shift"
 action = "ScrollToBottom"
 key    = "End"
 mods   = "Shift"
-
-[mouse]
-hide_when_typing = true
 
 [debug]
 highlight_damage   = false
