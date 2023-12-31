@@ -1,5 +1,5 @@
 export XDG_CONFIG_HOME=$HOME/.config
-VIM="lvim"
+VIM="nvim"
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Compinit
@@ -119,7 +119,7 @@ alias idp='idea $PWD'
 alias jup="jupyter notebook --notebook-dir $HOME/Notebooks"
 
 # LunarVim
-alias vim='lvim'
+alias vim='nvim'
 
 # Maven
 alias jj='java -jar target/$(basename $(pwd)).jar'
