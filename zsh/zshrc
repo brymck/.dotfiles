@@ -157,6 +157,7 @@ paths=(
     "$HOME/bin"             # local executables
     "$HOME/.cargo/bin"      # Cargo
     "$HOME/.local/bin"      # LunarVim
+    "$HOME/.local/scripts"  # shared executables
     "$GOBIN"                # Go
 )
 export PATH="${(j[:])paths}:$PATH"

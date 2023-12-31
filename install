@@ -188,6 +188,7 @@ SYMLINKS[.config/lvim]=lvim
 SYMLINKS[.config/nvim]=nvim
 SYMLINKS[.config/skhd]=skhd
 SYMLINKS[.config/yabai]=yabai
+SYMLINKS[.local/scripts]=scripts
 SYMLINKS[.tmux.conf]=tmux/tmux.conf
 SYMLINKS[.zshrc]=zsh/zshrc
 
