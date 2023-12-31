@@ -92,6 +92,7 @@ install_homebrew() {
 section Homebrew check_homebrew install_homebrew
 
 HOMEBREW_PACKAGES=(
+    alacritty
     bat
     coreutils
     duf
@@ -107,6 +108,7 @@ HOMEBREW_PACKAGES=(
     koekeishiya/formulae/yabai
     lua
     neovim
+    tmux
     tree-sitter
     wget
     zoxide
@@ -179,18 +181,21 @@ section LunarVim check_lunar_vim install_lunar_vim
 # Symlinks
 #-----------------------------------------------------------------------------------------------------------------------
 
-SYMLINKS=(
-    .config/lvim
-    .config/nvim
-    .config/skhd
-    .config/yabai
-    .zshrc
-)
+# Create an associative array of symlinks
+declare -A SYMLINKS
+SYMLINKS[.config/alacritty]=alacritty
+SYMLINKS[.config/lvim]=lvim
+SYMLINKS[.config/nvim]=nvim
+SYMLINKS[.config/skhd]=skhd
+SYMLINKS[.config/yabai]=yabai
+SYMLINKS[.zshrc]=zsh/zshrc
+
+# Iterate over keys and values of associative array
 
 get_missing_symlinks() {
-    for link in $SYMLINKS; do
-        if [[ ! -L "$HOME/$link" || "$(readlink "$HOME/$link")" != "$THIS_DIR/$link" ]]; then
-            print $link
+    for dest src in ${(kv)SYMLINKS}; do
+        if [[ ! -L "$HOME/$dest" || "$(readlink "$HOME/$dest")" != "$THIS_DIR/$src" ]]; then
+            print $dest
         fi
     done
 }
@@ -203,14 +208,15 @@ check_symlinks() {
 handle_missing_symlinks() {
     missing_symlinks=($(get_missing_symlinks))
     print "Creating missing symlinks: $missing_symlinks"
-    for link in $missing_symlinks; do
-        if [ -e $HOME/$link ]; then
-            print_eval "mv '$HOME/$link' '$HOME/$link.bak'"
+    for dest in $missing_symlinks; do
+        src=${SYMLINKS[$dest]}
+        if [ -e $HOME/$dest ]; then
+            print_eval "mv '$HOME/$dest' '$HOME/$dest.bak'"
         fi
-        if [ ! -d $(dirname $HOME/$link) ]; then
-            print_eval "mkdir -p '$(dirname $HOME/$link)'"
+        if [ ! -d $(dirname $HOME/$dest) ]; then
+            print_eval "mkdir -p '$(dirname $HOME/$dest)'"
         fi
-        print_eval "ln -s '$THIS_DIR/$link' '$HOME/$link'"
+        print_eval "ln -s '$THIS_DIR/$src' '$HOME/$dest'"
     done
 }
 
