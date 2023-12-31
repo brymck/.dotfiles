@@ -97,6 +97,7 @@ HOMEBREW_PACKAGES=(
     duf
     dust
     eza
+    felixkratz/formulae/borders
     fzf
     git
     gnupg
@@ -114,9 +115,8 @@ HOMEBREW_PACKAGES=(
     zsh-syntax-highlighting
 )
 
-
 get_missing_homebrew_packages() {
-    comm -13 <(brew list --full-name | sort) <(for p in $HOMEBREW_PACKAGES; do echo $p; done | sort)
+    comm -13 <(brew list --full-name -1 | sort) <(for p in $HOMEBREW_PACKAGES; do echo $p; done | sort)
 }
 
 check_homebrew_packages() {
