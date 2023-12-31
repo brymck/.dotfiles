@@ -1,0 +1,7 @@
+export XDG_CONFIG_HOME=$HOME/.config
+VIM='nvim'
+
+export ALTERNATIVE_EDITOR=
+export ALTERNATE_EDITOR=
+export EDITOR="$VIM"
+export LANG='en_US.UTF-8'
