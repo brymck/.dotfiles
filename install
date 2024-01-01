@@ -3,6 +3,8 @@ autoload -U colors && colors
 
 THIS_DIR=${0:a:h}
 
+git submodule update
+
 exit_status=0
 
 print_eval() {
@@ -98,7 +100,6 @@ HOMEBREW_PACKAGES=(
     duf
     dust
     eza
-    felixkratz/formulae/borders
     fzf
     git
     gnupg
@@ -116,6 +117,15 @@ HOMEBREW_PACKAGES=(
     zsh-autosuggestions
     zsh-syntax-highlighting
 )
+
+product_version="$(sw_vers --productVersion)"
+
+# Sonoma+ only
+if [[ "$product_version" > 14 ]]; then
+    HOMEBREW_PACKAGES+=(
+        felixkratz/formulae/borders
+    )
+fi
 
 get_missing_homebrew_packages() {
     comm -13 <(brew list --full-name -1 | sort) <(for p in $HOMEBREW_PACKAGES; do echo $p; done | sort)
