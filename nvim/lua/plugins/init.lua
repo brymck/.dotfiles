@@ -20,7 +20,7 @@ local default_plugins = {
     {
         "NvChad/nvterm",
         init = function()
-            require("core.utils").load_mappings "nvterm"
+            require("core.utils").load_mappings("nvterm")
         end,
         config = function(_, opts)
             require "base46.term"
@@ -31,7 +31,7 @@ local default_plugins = {
     {
         "NvChad/nvim-colorizer.lua",
         init = function()
-            require("core.utils").lazy_load "nvim-colorizer.lua"
+            require("core.utils").lazy_load("nvim-colorizer.lua")
         end,
         config = function(_, opts)
             require("colorizer").setup(opts)
@@ -64,7 +64,7 @@ local default_plugins = {
             return require("plugins.configs.others").blankline
         end,
         config = function(_, opts)
-            require("core.utils").load_mappings "blankline"
+            require("core.utils").load_mappings("blankline")
             dofile(vim.g.base46_cache .. "blankline")
             require("indent_blankline").setup(opts)
         end,
@@ -73,12 +73,12 @@ local default_plugins = {
     {
         "nvim-treesitter/nvim-treesitter",
         init = function()
-            require("core.utils").lazy_load "nvim-treesitter"
+            require("core.utils").lazy_load("nvim-treesitter")
         end,
         cmd = { "TSInstall", "TSBufEnable", "TSBufDisable", "TSModuleInfo" },
         build = ":TSUpdate",
         opts = function()
-            return require "plugins.configs.treesitter"
+            return require("plugins.configs.treesitter")
         end,
         config = function(_, opts)
             dofile(vim.g.base46_cache .. "syntax")
@@ -176,7 +176,7 @@ local default_plugins = {
             },
         },
         opts = function()
-            return require "plugins.configs.cmp"
+            return require("plugins.configs.cmp")
         end,
         config = function(_, opts)
             require("cmp").setup(opts)
@@ -194,7 +194,7 @@ local default_plugins = {
             { "gb", mode = "x", desc = "Comment toggle blockwise (visual)" },
         },
         init = function()
-            require("core.utils").load_mappings "comment"
+            require("core.utils").load_mappings("comment")
         end,
         config = function(_, opts)
             require("Comment").setup(opts)
@@ -206,7 +206,7 @@ local default_plugins = {
         "nvim-tree/nvim-tree.lua",
         cmd = { "NvimTreeToggle", "NvimTreeFocus" },
         init = function()
-            require("core.utils").load_mappings "nvimtree"
+            require("core.utils").load_mappings("nvimtree")
         end,
         opts = function()
             return require "plugins.configs.nvimtree"
@@ -225,7 +225,7 @@ local default_plugins = {
         },
         cmd = "Telescope",
         init = function()
-            require("core.utils").load_mappings "telescope"
+            require("core.utils").load_mappings("telescope")
         end,
         opts = function()
             return require "plugins.configs.telescope"
@@ -247,7 +247,7 @@ local default_plugins = {
         "folke/which-key.nvim",
         keys = { "<leader>", "<c-r>", "<c-w>", '"', "'", "`", "c", "v", "g" },
         init = function()
-            require("core.utils").load_mappings "whichkey"
+            require("core.utils").load_mappings("whichkey")
         end,
         cmd = "WhichKey",
         config = function(_, opts)
@@ -272,14 +272,21 @@ local default_plugins = {
         init = function()
             require("core.utils").load_mappings("zenmode")
         end,
+        opts = function()
+            return require("plugins.configs.zenmode")
+        end,
     },
 
     {
-        "github/copilot.vim",
+        "zbirenbaum/copilot.lua",
         cmd = "Copilot",
         build = ":Copilot auth",
         event = "InsertEnter",
     },
+
+    -- Tell me a joke:
+    -- 
+    -- 
 
     -- Cloak secrets
     {
