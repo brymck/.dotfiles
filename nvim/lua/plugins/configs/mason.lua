@@ -1,5 +1,6 @@
 local options = {
     ensure_installed = {
+        "clangd",
         "lua-language-server",
         "jdtls",
         "rust-analyzer",

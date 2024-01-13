@@ -87,11 +87,11 @@ install_homebrew() {
     print_eval 'source ~/.zshrc'
 }
 
+section Homebrew check_homebrew install_homebrew
+
 #-----------------------------------------------------------------------------------------------------------------------
 # Homebrew packages
 #-----------------------------------------------------------------------------------------------------------------------
-
-section Homebrew check_homebrew install_homebrew
 
 HOMEBREW_PACKAGES=(
     alacritty
@@ -142,6 +142,20 @@ install_homebrew_packages() {
 }
 
 section 'Homebrew packages' check_homebrew_packages install_homebrew_packages
+
+#-----------------------------------------------------------------------------------------------------------------------
+# TPM
+#-----------------------------------------------------------------------------------------------------------------------
+
+check_tpm() {
+    [ -d ~/.tmux/plugins/tpm ]
+}
+
+install_tpm() {
+    print_eval 'git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm'
+}
+
+section TPM check_tpm install_tpm
 
 #-----------------------------------------------------------------------------------------------------------------------
 # iTerm 2

@@ -279,12 +279,8 @@ local default_plugins = {
 
     {
         "github/copilot.vim",
-        cmd = "Copilot",
-        build = ":Copilot auth",
+        build = ":Copilot setup",
         event = "InsertEnter",
-        config = function()
-            require("copilot").setup({})
-        end,
     },
 
     -- Cloak secrets

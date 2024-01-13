@@ -68,6 +68,7 @@ lspconfig.lua_ls.setup {
 
 local servers = {
     "bashls",
+    "clangd",
     "cssls",
     "gopls",
     "html",

@@ -1,5 +1,7 @@
 local options = {
     ensure_installed = {
+        "c",
+        "cpp",
         "go",
         "java",
         "javascript",
