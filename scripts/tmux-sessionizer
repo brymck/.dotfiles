@@ -1,30 +1,45 @@
 #!/usr/bin/env bash
 DEV_DIR=$HOME/dev
 
+get_project_directories() {
+    find $DEV_DIR -mindepth 1 -maxdepth 1 -type d
+}
+
+get_all() {
+    echo scratch
+    get_project_directories
+}
+
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
-    selected=$(find $DEV_DIR -mindepth 1 -maxdepth 1 -type d | fzf)
+    selected=$(get_all | fzf)
 fi
 
 if [[ -z $selected ]]; then
     exit 0
 fi
 
-name=$(basename $selected | tr -d .)
+if [[ $selected == scratch ]]; then
+    name=scratch
+    directory=$PWD
+else
+    name=$(basename $selected | tr -d .)
+    directory=$selected
+fi
 
 tmux_running=$(pgrep tmux)
 
 # Create a new attached session if tmux is not already running
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
-    tmux new-session -s $name -c $selected
+    tmux new-session -s $name -c $directory
     exit 0
 fi
 
 # The new session needs to be detached otherwise it will be considered a nested
 # session and throw an error
 if ! tmux has-session -t=$name 2> /dev/null; then
-    tmux new-session -d -s $name -c $selected
+    tmux new-session -d -s $name -c $directory
 fi
 
 tmux switch-client -t $name

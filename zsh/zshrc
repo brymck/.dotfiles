@@ -126,6 +126,9 @@ alias pcr='pre-commit run'
 # SketchUp bugfix
 alias sketch='(cd /Applications/SketchUp\ 2021/SketchUp.app/Contents/MacOS/ && ./SketchUp)'
 
+# tmux
+alias t="$HOME/.local/scripts/tmux-sessionizer scratch"
+
 # wttr.in
 alias wttr="curl 'wttr.in/~Musashino?u'"
 
