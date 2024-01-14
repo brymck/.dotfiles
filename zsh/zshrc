@@ -69,6 +69,9 @@ if [ -f $HOME/venv/bin/activate ]; then
     source $HOME/venv/bin/activate
 fi
 
+# Bat
+export BAT_THEME='Catppuccin-mocha'
+
 #-----------------------------------------------------------------------------------------------------------------------
 # Shell extensions
 #-----------------------------------------------------------------------------------------------------------------------
@@ -131,6 +134,9 @@ alias t="$HOME/.local/scripts/tmux-sessionizer scratch"
 
 # wttr.in
 alias wttr="curl 'wttr.in/~Musashino?u'"
+
+# yabai
+alias yb='pgrep -q yabai && yabai --stop-service || yabai --start-service --skhd'
 
 if command -v eza >/dev/null; then
     alias ls='eza'

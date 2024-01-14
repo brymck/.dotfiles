@@ -208,6 +208,7 @@ section LunarVim check_lunar_vim install_lunar_vim
 # Create an associative array of symlinks
 declare -A SYMLINKS
 SYMLINKS[.config/alacritty]=alacritty
+SYMLINKS[.config/bat]=bat
 SYMLINKS[.config/lvim]=lvim
 SYMLINKS[.config/nvim]=nvim
 SYMLINKS[.config/skhd]=skhd
