@@ -12,6 +12,7 @@ decorations     = "none"
 dynamic_padding = false
 dynamic_title   = true
 opacity         = 1.0
+option_as_alt   = "OnlyLeft"
 startup_mode    = "Maximized"
 title           = "Alacritty"
 
