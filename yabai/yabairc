@@ -40,5 +40,5 @@ yabai -m rule --add app="^Citrix Viewer$" manage=off
 
 # Run borders to highlight windows based on focus
 if command -v borders > /dev/null; then
-    borders active_color=0xff10b981 inactive_color=0x80494d64 width=5.0 &
+    borders active_color=0xff10b981 inactive_color=0x80494d64 width=2.0 &
 fi
