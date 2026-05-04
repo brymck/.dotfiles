@@ -1,253 +1,139 @@
-#!/usr/bin/env zsh
-autoload -U colors && colors
+#!/bin/sh
 
-THIS_DIR=${0:a:h}
+THIS_DIR="$(cd "$(dirname "$0")" && pwd)"
+EXIT_STATUS=0
+FORCE=0
 
-git submodule update
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
 
-exit_status=0
+for arg in "$@"; do
+    case "$arg" in
+        --force|-f)
+            FORCE=1
+            ;;
+    esac
+done
 
-print_eval() {
-    command=$1
-    print "> ${fg_bold[white]}${command}${reset_color}"
-    eval $command
+checkmark() {
+    printf "${GREEN}✓${NC}"
 }
 
-found() {
-    print "${fg_bold[green]}\u2713${reset_color}"
+cross() {
+    printf "${RED}✗${NC}"
 }
 
-missing() {
-    print "${fg_no_bold[yellow]}missing${reset_color}"
+warning() {
+    printf "${YELLOW}!${NC}"
 }
 
-fail() {
-    print "${fg_no_bold[red]}\u2717${reset_color}"
-}
+create_symlink() {
+    target="$1"
+    src="$2"
+    target_path="$HOME/$target"
+    src_path="$THIS_DIR/$src"
+    removed_old=0
 
-error() {
-    print "${fg_bold[red]}Failed to set up $1${reset_color}"
-    exit_status=1
-}
-
-url() {
-    target=$1
-    print "  ${fg_no_bold[cyan]}${target}${reset_color}"
-}
-
-section() {
-    zparseopts -E -D -- fail:=fail_flag
-
-    name=$1
-    check=$2
-    handle_missing=$3
-
-    print -n "$name "
-    if $check; then
-        found
-    else
-        if [[ -n $fail_flag ]]; then
-            fail
-            $handle_missing
+    # Check if it's already a symlink
+    if [ -L "$target_path" ]; then
+        current_link="$(readlink "$target_path")"
+        if [ "$current_link" = "$src_path" ]; then
+            # Correct symlink already exists
+            printf "  "
+            checkmark
+            printf " %s\n" "$target"
+            return 0
         else
-            missing
-            $handle_missing
-            $install
-            $check || error $name
+            # Wrong symlink - handle based on force flag
+            if [ "$FORCE" -eq 1 ]; then
+                rm "$target_path" 2>/dev/null
+                if [ $? -ne 0 ]; then
+                    printf "  "
+                    cross
+                    printf " %s (failed to remove old symlink)\n" "$target"
+                    EXIT_STATUS=1
+                    return 1
+                fi
+                removed_old=1
+            else
+                printf "  "
+                cross
+                printf " %s (points to: %s, expected: %s)\n" "$target" "$current_link" "$src_path"
+                EXIT_STATUS=1
+                return 1
+            fi
         fi
+    fi
+
+    # Check if a file or directory exists (not a symlink)
+    if [ -e "$target_path" ]; then
+        if [ "$FORCE" -eq 1 ]; then
+            if [ -d "$target_path" ]; then
+                rmdir "$target_path" 2>/dev/null
+                if [ $? -ne 0 ]; then
+                    rm -rf "$target_path" 2>/dev/null
+                fi
+            else
+                rm "$target_path" 2>/dev/null
+            fi
+            if [ $? -ne 0 ]; then
+                printf "  "
+                cross
+                printf " %s (failed to remove existing file/directory)\n" "$target"
+                EXIT_STATUS=1
+                return 1
+            fi
+            removed_old=1
+        else
+            printf "  "
+            cross
+            printf " %s (exists and is not a symlink)\n" "$target"
+            EXIT_STATUS=1
+            return 1
+        fi
+    fi
+
+    target_dir="$(dirname "$target_path")"
+    if [ ! -d "$target_dir" ]; then
+        mkdir -p "$target_dir" 2>/dev/null
+        if [ $? -ne 0 ]; then
+            printf "  "
+            cross
+            printf " %s (failed to create parent directory)\n" "$target"
+            EXIT_STATUS=1
+            return 1
+        fi
+    fi
+
+    ln -s "$src_path" "$target_path" 2>/dev/null
+    if [ $? -eq 0 ]; then
+        printf "  "
+        if [ "$removed_old" -eq 1 ]; then
+            warning
+            printf " %s (removed old and recreated)\n" "$target"
+        else
+            checkmark
+            printf " %s\n" "$target"
+        fi
+        return 0
+    else
+        printf "  "
+        cross
+        printf " %s (failed to create symlink)\n" "$target"
+        EXIT_STATUS=1
+        return 1
     fi
 }
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Oh My Zsh
-#-----------------------------------------------------------------------------------------------------------------------
+echo "Creating symlinks..."
 
-check_oh_my_zsh() {
-    [ -d ~/.oh-my-zsh ]
-}
+create_symlink ".config/fish/config.fish" ".config/fish/config.fish"
+create_symlink ".config/ghostty" ".config/ghostty"
+create_symlink ".config/tmux" ".config/tmux"
+create_symlink ".local/scripts" ".local/scripts"
+create_symlink ".zsh_profile" ".zsh_profile"
+create_symlink ".zshrc" ".zshrc"
 
-install_oh_my_zsh() {
-    print_eval 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
-    print_eval 'source ~/.zshrc'
-}
-
-section 'Oh My Zsh' check_oh_my_zsh install_oh_my_zsh
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Homebrew
-#-----------------------------------------------------------------------------------------------------------------------
-
-check_homebrew() {
-    command -v brew > /dev/null
-}
-
-install_homebrew() {
-    print "Attempting to install Homebrew..."
-    print_eval '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-    print_eval 'source ~/.zshrc'
-}
-
-section Homebrew check_homebrew install_homebrew
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Homebrew packages
-#-----------------------------------------------------------------------------------------------------------------------
-
-HOMEBREW_PACKAGES=(
-    alacritty
-    bat
-    coreutils
-    duf
-    dust
-    eza
-    fzf
-    git
-    gnupg
-    go
-    jq
-    koekeishiya/formulae/skhd
-    koekeishiya/formulae/yabai
-    lua
-    neovim
-    tmux
-    tree-sitter
-    wget
-    zoxide
-    zplug
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-)
-
-product_version="$(sw_vers --productVersion)"
-
-# Sonoma+ only
-if [[ "$product_version" > 14 ]]; then
-    HOMEBREW_PACKAGES+=(
-        felixkratz/formulae/borders
-    )
-fi
-
-get_missing_homebrew_packages() {
-    comm -13 <(brew list --full-name -1 | sort) <(for p in $HOMEBREW_PACKAGES; do echo $p; done | sort)
-}
-
-check_homebrew_packages() {
-    missing_packages=($(get_missing_homebrew_packages))
-    [ ${#missing_packages[@]} -eq 0 ]
-}
-
-install_homebrew_packages() {
-    missing_packages=($(get_missing_homebrew_packages))
-    print_eval "brew install $missing_packages"
-}
-
-section 'Homebrew packages' check_homebrew_packages install_homebrew_packages
-
-#-----------------------------------------------------------------------------------------------------------------------
-# TPM
-#-----------------------------------------------------------------------------------------------------------------------
-
-check_tpm() {
-    [ -d ~/.tmux/plugins/tpm ]
-}
-
-install_tpm() {
-    print_eval 'git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm'
-}
-
-section TPM check_tpm install_tpm
-
-#-----------------------------------------------------------------------------------------------------------------------
-# iTerm 2
-#-----------------------------------------------------------------------------------------------------------------------
-
-check_iterm() {
-    count=$(mdfind -count -name 'iTerm' -onlyin /Applications -onlyin ~/Applications -onlyin /System/Applications 2>/dev/null)
-    [ $count -gt 0 ]
-}
-
-handle_missing_iterm() {
-    print 'Download iTerm 2 from'
-    url 'https://iterm2.com/downloads.html'
-}
-
-section 'iTerm 2' check_iterm handle_missing_iterm --fail
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Rust
-#-----------------------------------------------------------------------------------------------------------------------
-
-check_rust() {
-    command -v rustup > /dev/null
-}
-
-install_rust() {
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-}
-
-section Rust check_rust install_rust
-
-#-----------------------------------------------------------------------------------------------------------------------
-# LunarVim
-#-----------------------------------------------------------------------------------------------------------------------
-
-check_lunar_vim() {
-    command -v lvim > /dev/null
-}
-
-install_lunar_vim() {
-    bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
-}
-
-section LunarVim check_lunar_vim install_lunar_vim
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Symlinks
-#-----------------------------------------------------------------------------------------------------------------------
-
-# Create an associative array of symlinks
-declare -A SYMLINKS
-SYMLINKS[.config/alacritty]=alacritty
-SYMLINKS[.config/bat]=bat
-SYMLINKS[.config/lvim]=lvim
-SYMLINKS[.config/nvim]=nvim
-SYMLINKS[.config/skhd]=skhd
-SYMLINKS[.config/yabai]=yabai
-SYMLINKS[.local/scripts]=scripts
-SYMLINKS[.tmux.conf]=tmux/tmux.conf
-SYMLINKS[.zsh_profile]=zsh/zsh_profile
-SYMLINKS[.zshrc]=zsh/zshrc
-
-# Iterate over keys and values of associative array
-
-get_missing_symlinks() {
-    for dest src in ${(kv)SYMLINKS}; do
-        if [[ ! -L "$HOME/$dest" || "$(readlink "$HOME/$dest")" != "$THIS_DIR/$src" ]]; then
-            print $dest
-        fi
-    done
-}
-
-check_symlinks() {
-    missing_symlinks=($(get_missing_symlinks))
-    [ ${#missing_symlinks[@]} -eq 0 ]
-}
-
-handle_missing_symlinks() {
-    missing_symlinks=($(get_missing_symlinks))
-    print "Creating missing symlinks: $missing_symlinks"
-    for dest in $missing_symlinks; do
-        src=${SYMLINKS[$dest]}
-        if [ -e $HOME/$dest ]; then
-            print_eval "mv '$HOME/$dest' '$HOME/$dest.bak'"
-        fi
-        if [ ! -d $(dirname $HOME/$dest) ]; then
-            print_eval "mkdir -p '$(dirname $HOME/$dest)'"
-        fi
-        print_eval "ln -s '$THIS_DIR/$src' '$HOME/$dest'"
-    done
-}
-
-section symlinks check_symlinks handle_missing_symlinks
-
-exit $exit_status
+exit $EXIT_STATUS
