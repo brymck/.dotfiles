@@ -129,6 +129,7 @@ create_symlink() {
 
 echo "Creating symlinks..."
 
+create_symlink ".config/fish/config.fish" ".config/fish/config.fish"
 create_symlink ".config/ghostty" ".config/ghostty"
 create_symlink ".config/tmux" ".config/tmux"
 create_symlink ".local/scripts" ".local/scripts"

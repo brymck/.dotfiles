@@ -14,6 +14,7 @@ for %%a in (%*) do (
 
 echo Creating symlinks...
 
+call :create_symlink ".config\fish\config.fish" ".config\fish\config.fish" file
 call :create_symlink ".config\ghostty" ".config\ghostty" dir
 call :create_symlink ".config\tmux" ".config\tmux" dir
 call :create_symlink ".local\scripts" ".local\scripts" dir
