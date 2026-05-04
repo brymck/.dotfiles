@@ -95,23 +95,14 @@ section Homebrew check_homebrew install_homebrew
 
 HOMEBREW_PACKAGES=(
     alacritty
-    bat
     coreutils
-    duf
-    dust
-    eza
     fzf
     git
     gnupg
     go
     jq
-    koekeishiya/formulae/skhd
-    koekeishiya/formulae/yabai
-    lua
     neovim
     tmux
-    tree-sitter
-    wget
     zoxide
     zplug
     zsh-autosuggestions
@@ -119,13 +110,6 @@ HOMEBREW_PACKAGES=(
 )
 
 product_version="$(sw_vers --productVersion)"
-
-# Sonoma+ only
-if [[ "$product_version" > 14 ]]; then
-    HOMEBREW_PACKAGES+=(
-        felixkratz/formulae/borders
-    )
-fi
 
 get_missing_homebrew_packages() {
     comm -13 <(brew list --full-name -1 | sort) <(for p in $HOMEBREW_PACKAGES; do echo $p; done | sort)
@@ -144,75 +128,13 @@ install_homebrew_packages() {
 section 'Homebrew packages' check_homebrew_packages install_homebrew_packages
 
 #-----------------------------------------------------------------------------------------------------------------------
-# TPM
-#-----------------------------------------------------------------------------------------------------------------------
-
-check_tpm() {
-    [ -d ~/.tmux/plugins/tpm ]
-}
-
-install_tpm() {
-    print_eval 'git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm'
-}
-
-section TPM check_tpm install_tpm
-
-#-----------------------------------------------------------------------------------------------------------------------
-# iTerm 2
-#-----------------------------------------------------------------------------------------------------------------------
-
-check_iterm() {
-    count=$(mdfind -count -name 'iTerm' -onlyin /Applications -onlyin ~/Applications -onlyin /System/Applications 2>/dev/null)
-    [ $count -gt 0 ]
-}
-
-handle_missing_iterm() {
-    print 'Download iTerm 2 from'
-    url 'https://iterm2.com/downloads.html'
-}
-
-section 'iTerm 2' check_iterm handle_missing_iterm --fail
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Rust
-#-----------------------------------------------------------------------------------------------------------------------
-
-check_rust() {
-    command -v rustup > /dev/null
-}
-
-install_rust() {
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-}
-
-section Rust check_rust install_rust
-
-#-----------------------------------------------------------------------------------------------------------------------
-# LunarVim
-#-----------------------------------------------------------------------------------------------------------------------
-
-check_lunar_vim() {
-    command -v lvim > /dev/null
-}
-
-install_lunar_vim() {
-    bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
-}
-
-section LunarVim check_lunar_vim install_lunar_vim
-
-#-----------------------------------------------------------------------------------------------------------------------
 # Symlinks
 #-----------------------------------------------------------------------------------------------------------------------
 
 # Create an associative array of symlinks
 declare -A SYMLINKS
 SYMLINKS[.config/alacritty]=alacritty
-SYMLINKS[.config/bat]=bat
-SYMLINKS[.config/lvim]=lvim
-SYMLINKS[.config/nvim]=nvim
-SYMLINKS[.config/skhd]=skhd
-SYMLINKS[.config/yabai]=yabai
+SYMLINKS[.config/ghostty]=ghostty
 SYMLINKS[.local/scripts]=scripts
 SYMLINKS[.tmux.conf]=tmux/tmux.conf
 SYMLINKS[.zsh_profile]=zsh/zsh_profile
