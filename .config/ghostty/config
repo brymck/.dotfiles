@@ -1,2 +1,5 @@
-theme = Catppuccin Mocha
 command = /usr/local/bin/fish --login --interactive
+custom-shader = shaders/cursor-trail.glsl
+font-family = Operator Mono SSm Lig
+font-thicken = true
+theme = Catppuccin Mocha
