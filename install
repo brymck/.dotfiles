@@ -129,11 +129,11 @@ create_symlink() {
 
 echo "Creating symlinks..."
 
-create_symlink ".config/fish/config.fish" ".config/fish/config.fish"
-create_symlink ".config/ghostty" ".config/ghostty"
-create_symlink ".config/tmux" ".config/tmux"
-create_symlink ".local/scripts" ".local/scripts"
-create_symlink ".zsh_profile" ".zsh_profile"
-create_symlink ".zshrc" ".zshrc"
+line_num=0
+while read -r src target type; do
+    line_num=$((line_num + 1))
+    [ "$line_num" -eq 1 ] && continue
+    create_symlink "$target" "$src"
+done < "$THIS_DIR/mappings.txt"
 
 exit $EXIT_STATUS

@@ -1,0 +1,7 @@
+Source                   Target                   Type
+.config/fish/config.fish .config/fish/config.fish file
+.config/ghostty          .config/ghostty          dir
+.config/tmux             .config/tmux             dir
+.local/scripts           .local/scripts           dir
+.zsh_profile             .zsh_profile             file
+.zshrc                   .zshrc                   file

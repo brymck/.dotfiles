@@ -14,12 +14,9 @@ for %%a in (%*) do (
 
 echo Creating symlinks...
 
-call :create_symlink ".config\fish\config.fish" ".config\fish\config.fish" file
-call :create_symlink ".config\ghostty" ".config\ghostty" dir
-call :create_symlink ".config\tmux" ".config\tmux" dir
-call :create_symlink ".local\scripts" ".local\scripts" dir
-call :create_symlink ".zsh_profile" ".zsh_profile" file
-call :create_symlink ".zshrc" ".zshrc" file
+for /f "skip=1 tokens=1-3" %%a in ("%THIS_DIR%\mappings.txt") do (
+    call :create_symlink "%%b" "%%a" "%%c"
+)
 
 exit /b %EXIT_STATUS%
 
