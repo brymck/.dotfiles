@@ -42,4 +42,11 @@ if status is-interactive
     abbr -a gst 'git status'
     abbr -a gsta 'git stash push'
     abbr -a gstp 'git stash pop'
+
+    # tmux
+    abbr -a t tmux
+
+    # Vim
+    abbr -a v nvim
+    abbr -a vim nvim
 end
