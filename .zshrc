@@ -185,3 +185,5 @@ export NVM_DIR="$HOME/.config/nvm"
 
 # Zoxide
 eval "$(zoxide init zsh)"
+
+alias lazyvim='NVIM_APPNAME=lazyvim nvim'

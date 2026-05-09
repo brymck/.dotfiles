@@ -3,13 +3,18 @@
 #-------------------------------------------------------------------------------
 if test -x /opt/homebrew/bin/brew
     eval (/opt/homebrew/bin/brew shellenv)
+else if test -x /home/linuxbrew/.linuxbrew/bin/brew
+    eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+end
+if command -q brew
+    set -l brew_prefix (brew --prefix)
 end
 
 #-------------------------------------------------------------------------------
 # Node
 #-------------------------------------------------------------------------------
-if test -x /opt/homebrew/bin/fnm
-    eval (/opt/homebrew/bin/fnm env)
+if command -q fnm
+    eval (fnm env)
 end
 
 #-------------------------------------------------------------------------------
@@ -48,4 +53,8 @@ if status is-interactive
     # Vim
     abbr -a v nvim
     abbr -a vim nvim
+end
+
+if command -q zoxide
+    zoxide init fish | source
 end
