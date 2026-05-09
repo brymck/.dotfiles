@@ -2,4 +2,13 @@ command = /usr/local/bin/fish --login --interactive
 custom-shader = shaders/cursor-trail.glsl
 font-family = Operator Mono SSm Lig
 font-thicken = true
+keybind = alt+left=unbind
+keybind = alt+right=unbind
+keybind = alt+up=unbind
+keybind = alt+down=unbind
+keybind = cmd+alt+left=unbind
+keybind = cmd+alt+right=unbind
+keybind = cmd+alt+up=unbind
+keybind = cmd+alt+down=unbind
+macos-option-as-alt = true
 theme = Catppuccin Mocha

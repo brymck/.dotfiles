@@ -17,7 +17,6 @@ end
 #-------------------------------------------------------------------------------
 if status is-interactive
     # Git
-    abbr -a gst 'git status'
     abbr -a g git
     abbr -a ga 'git add'
     abbr -a gaa 'git add --all'
