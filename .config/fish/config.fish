@@ -61,3 +61,4 @@ end
 if command -q zoxide
     zoxide init fish | source
 end
+export PATH="$HOME/.local/bin:$PATH"

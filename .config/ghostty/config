@@ -1,4 +1,4 @@
-command = /usr/local/bin/fish --login --interactive
+command = /opt/homebrew/bin/fish --login --interactive
 custom-shader = shaders/cursor-trail.glsl
 font-family = Operator Mono SSm Lig
 font-thicken = true
